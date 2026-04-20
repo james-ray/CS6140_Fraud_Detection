@@ -109,6 +109,7 @@ text
 # Virtual environment (Python 3.12)
 python3 -m venv fraud_detect
 source fraud_detect/bin/activate
+```
 
 # Key packages
 pip install numpy pandas scikit-learn tensorflow matplotlib seaborn imbalanced-learn
@@ -125,95 +126,32 @@ class CustomMLP:
             gradients_w[i] = np.dot(activations[i].T, delta) / m
             gradients_b[i] = np.sum(delta, axis=0, keepdims=True) / m
         return gradients_w, gradients_b
-Training Configuration
-Parameter	Custom MLP	Keras MLP
-Epochs	50	50 (early stopping)
-Batch Size	64	64
-Learning Rate	0.001	0.001 (Adam default)
-Hidden Layers	2 (32→16)	2 (64→32)
-Regularization	None	Dropout (0.3)
-Evaluation and Results
-5-Fold Cross-Validation Results
-Model	Accuracy	Precision	Recall	F1-Score	AUC
-Logistic Regression	0.9478 ± 0.0008	0.9743 ± 0.0008	0.9197 ± 0.0011	0.9462 ± 0.0008	0.9893 ± 0.0003
-Custom MLP (Hand-coded)	0.9959 ± 0.0005	0.9927 ± 0.0007	0.9991 ± 0.0004	0.9959 ± 0.0005	0.9997 ± 0.0000
-Keras MLP	0.9997 ± 0.0001	0.9994 ± 0.0001	1.0000 ± 0.0000	0.9997 ± 0.0001	0.9999 ± 0.0000
-Key Findings
-1. Linear models are insufficient for fraud detection
 
-Logistic Regression misses ~8% of fraudulent transactions (Recall 92%)
 
-In financial terms: 8 missed frauds per 100 attempts = significant losses
+### Future Improvements
 
-2. Custom backpropagation works correctly
+| Direction | Description | Expected Benefit |
+|-----------|-------------|------------------|
+| **Recurrent Networks** | Model transaction sequences over time | Capture temporal fraud patterns |
+| **Anomaly Detection** | Autoencoder for unsupervised fraud detection | Detect novel fraud types |
+| **Real-time Deployment** | Optimize inference latency (< 100ms) | Production readiness |
 
-Hand-coded MLP achieves 99.6% F1-score
+### Lessons Learned
 
-Validates understanding of gradient flow through multiple layers
+1. **Class imbalance is critical** - Accuracy is meaningless; use precision-recall metrics
+2. **Gradient checking validates backpropagation** - Numerical vs. analytical gradients should match
+3. **Framework vs. hand-coded** - Both achieve similar results; frameworks add convenience
 
-3. Framework optimizations provide marginal improvement
+---
 
-Keras MLP outperforms custom version by 0.4% in F1-score
+## References
 
-Dropout and Adam optimizer contribute to better generalization
+1. Kaggle Credit Card Fraud Detection Dataset: https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud
 
-Performance Visualization
-ROC Curves:
+2. Chawla, N. V., Bowyer, K. W., Hall, L. O., & Kegelmeyer, W. P. (2002). "SMOTE: Synthetic Minority Over-sampling Technique." Journal of Artificial Intelligence Research, 16, 321-357.
 
-Custom MLP AUC: 0.9997
+3. Goodfellow, I., Bengio, Y., & Courville, A. (2016). "Deep Learning." MIT Press. (Chapter 6: Backpropagation)
 
-Keras MLP AUC: 0.9999
+4. TensorFlow Documentation: https://www.tensorflow.org/
 
-Logistic Regression AUC: 0.9893
-
-Learning Curves:
-
-Custom MLP converges after ~30 epochs
-
-Keras MLP converges faster due to Adam optimization
-
-Conclusion
-Summary of Contributions
-Demonstrated necessity of deep learning for fraud detection
-
-8% recall gap between linear and non-linear models
-
-Neural networks capture complex feature interactions
-
-Successfully implemented backpropagation from scratch
-
-Explicit chain rule application
-
-Mini-batch gradient descent
-
-ReLU and Sigmoid activations
-
-Established fair comparison methodology
-
-Stratified 5-fold cross-validation
-
-SMOTE for class imbalance
-
-Multiple evaluation metrics (focus on recall)
-
-Why Neural Networks Outperform Linear Models
-text
-Linear Model Boundary:  ─────────────────
-Fraud Pattern:          Small Amount + Unusual Time + New Merchant
-                        (requires AND combination = non-linear)
-
-Neural Network Solution:
-    Layer 1: Detect individual signals (amount, time, merchant)
-    Layer 2: Combine signals (small AND unusual)
-    Layer 3: Final decision (combination AND new merchant)
-Future Improvements
-Direction	Description	Expected Benefit
-Recurrent Networks	Model transaction sequences over time	Capture temporal fraud patterns
-Anomaly Detection	Autoencoder for unsupervised fraud detection	Detect novel fraud types
-Real-time Deployment	Optimize inference latency (< 100ms)	Production readiness
-Lessons Learned
-Class imbalance is critical - Accuracy is meaningless; use precision-recall metrics
-
-Gradient checking validates backpropagation - Numerical vs. analytical gradients should match
-
-Framework vs. hand-coded - Both achieve similar results; frameworks add convenience
+5. Kingma, D. P., & Ba, J. (2015). "Adam: A Method for Stochastic Optimization." ICLR.
