@@ -190,8 +190,8 @@ class CustomMLP:
 **Trade-off Analysis:**
 Training Time Comparison (5-fold CV)
 ───────────────────────────────────────── <br/>
-Custom MLP: ████████████████████████████████████ (10 min) <br/>
-Keras MLP: ████████████████ (4 min)
+Keras MLP: ████████████████████████████████████ (97s per fold CV) <br/>
+Custom MLP: ████████████████ (41s per fold CV)
 
 Memory Usage
 ───────────────────────────────────────── <br/>
