@@ -36,18 +36,15 @@ The Credit Card Fraud Detection dataset contains 284,807 transactions, of which 
 ## Solution Design and Methodology
 
 ### Dataset Preprocessing
-Raw Data (284,807 × 31)
-│
-├── Scale 'Time' and 'Amount' features
-├── Drop original unscaled columns
-└── Result: 30 features (V1-V28 + scaled_time + scaled_amount)
-
+Raw Data (284,807 × 31) <br/>
+│ <br/>
+├── Scale 'Time' and 'Amount' features <br/>
+├── Drop original unscaled columns <br/>
+└── Result: 30 features (V1-V28 + scaled_time + scaled_amount) <br/>
 SMOTE Oversampling
-│
-├── Balance classes (284,315 fraud + 284,315 legitimate)
-└── Result: 568,630 balanced samples
-
-text
+│ <br/>
+├── Balance classes (284,315 fraud + 284,315 legitimate) <br/>
+└── Result: 568,630 balanced samples <br/>
 
 ### Model Architecture
 
