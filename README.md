@@ -112,9 +112,12 @@ source fraud_detect/bin/activate
 ```
 
 # Key packages
+
 pip install numpy pandas scikit-learn tensorflow matplotlib seaborn imbalanced-learn
-Custom MLP Core Implementation
+
+## Custom MLP Core Implementation
 python
+```
 class CustomMLP:
     def backward(self, X, y, output, activations):
         m = X.shape[0]
@@ -126,7 +129,7 @@ class CustomMLP:
             gradients_w[i] = np.dot(activations[i].T, delta) / m
             gradients_b[i] = np.sum(delta, axis=0, keepdims=True) / m
         return gradients_w, gradients_b
-
+```
 
 ### Future Improvements
 
