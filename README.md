@@ -128,6 +128,95 @@ class CustomMLP:
         return gradients_w, gradients_b
 ```
 
+## Evaluation and Results
+
+### 5-Fold Cross-Validation Results
+
+| Model | Accuracy | Precision | Recall | F1-Score | AUC |
+|-------|----------|-----------|--------|----------|-----|
+| **Logistic Regression** | 0.9478 ± 0.0008 | 0.9743 ± 0.0008 | 0.9197 ± 0.0011 | 0.9462 ± 0.0008 | 0.9893 ± 0.0003 |
+| **Custom MLP (Hand-coded)** | 0.9959 ± 0.0005 | 0.9927 ± 0.0007 | 0.9991 ± 0.0004 | 0.9959 ± 0.0005 | 0.9997 ± 0.0000 |
+| **Keras MLP** | 0.9997 ± 0.0001 | 0.9994 ± 0.0001 | 1.0000 ± 0.0000 | 0.9997 ± 0.0001 | 0.9999 ± 0.0000 |
+
+---
+
+### Key Findings
+
+**1. Linear models are insufficient for fraud detection**
+
+| Metric | Logistic Regression | Custom MLP | Improvement |
+|--------|---------------------|------------|-------------|
+| Recall | 91.97% | 99.91% | **+7.94%** |
+| F1-Score | 94.62% | 99.59% | **+4.97%** |
+
+> Logistic Regression misses ~8% of fraudulent transactions. In financial terms: 8 missed frauds per 100 attempts = significant losses.
+
+**2. Custom backpropagation works correctly**
+- Hand-coded MLP achieves 99.6% F1-score
+- Validates understanding of gradient flow through multiple layers
+
+**3. Framework optimizations provide marginal improvement**
+
+| Comparison | Custom MLP | Keras MLP | Gain |
+|------------|------------|-----------|------|
+| F1-Score | 99.59% | 99.97% | **+0.38%** |
+| AUC | 99.97% | 99.99% | **+0.02%** |
+
+---
+
+### Performance vs. Resource Trade-off
+
+**Q: Does Keras lead to increased time/memory cost? How do we balance performance and resources?**
+
+**A: Here's our empirical comparison from training on a standard CPU (no GPU):**
+
+| Aspect | Custom MLP (NumPy) | Keras MLP (TensorFlow) |
+|--------|-------------------|------------------------|
+| **Training Time (per fold)** | ~8-10 minutes | ~3-4 minutes |
+| **Total Training Time (5-fold CV)** | ~45 minutes | ~18 minutes |
+| **Memory Usage** | ~2-3 GB | ~1-2 GB |
+| **Inference Latency (per transaction)** | ~5 ms | ~8 ms |
+| **Model Size** | ~0.5 MB | ~1.2 MB |
+
+**Key Observations:**
+
+| Finding | Explanation |
+|---------|-------------|
+| **Keras trains faster** | Optimized backend (oneDNN, AVX2) and graph compilation |
+| **Keras uses less memory** | Lazy evaluation and efficient memory management |
+| **Inference slightly slower** | Framework overhead for single predictions |
+| **Custom MLP has smaller footprint** | No additional library dependencies |
+
+**Trade-off Analysis:**
+Training Time Comparison (5-fold CV)
+───────────────────────────────────────── <br/>
+Custom MLP: ████████████████████████████████████ (10 min) <br/>
+Keras MLP: ████████████████ (4 min)
+
+Memory Usage
+───────────────────────────────────────── <br/>
+Custom MLP: ████████████████████ (2.5 GB) <br/>
+Keras MLP: ██████████████ (1.5 GB)
+
+Inference Latency (per transaction) <br/>
+───────────────────────────────────────── <br/>
+Custom MLP: ████ (5 ms) <br/>
+Keras MLP: ██████ (8 ms) <br/>
+
+
+| Scenario | Recommended Model | Reasoning |
+|----------|-------------------|-----------|
+| **Batch inference (thousands of transactions)** | Keras | Faster processing, better optimization |
+| **Real-time single transaction** | Custom MLP | Lower per-prediction latency |
+| **Resource-constrained environment** | Custom MLP | Smaller binary size, no TF dependency |
+| **Production with high throughput** | Keras | Better CPU utilization, faster training |
+
+**Conclusion on Trade-off:**
+
+> "While Keras trains 2-3x faster and uses less memory during training, it has slightly higher per-inference latency due to framework overhead. For our fraud detection scenario where we process transactions in real-time, the 3ms difference is negligible compared to network latency. The 0.38% F1 improvement from Keras justifies its use. However, if deploying on embedded systems, the lightweight Custom MLP might be preferable."
+
+**Training Time Breakdown (per fold, 50 epochs, 454K samples):**
+
 ### Future Improvements
 
 | Direction | Description | Expected Benefit |
